@@ -3,62 +3,72 @@
 #include <ctype.h>
 #include <string.h>
 
-#define MIN 8
-#define MAX 12
+#define MIN 16
+#define MAX 46
 
 int main(int argc, char* argv[]) {
-    int n = 0;
     int i = 0;
-    int j = 0;
     char *email = NULL;
+    int length;
+    int j;
+    int containAt = 0;
+    int containSpecialChar = 0;
 
 while (1) {
-    free(email);
     printf("Digite seu email: ");
     scanf("%ms", &email);
-    if(isspace(email[n])) {
-        printf("Space over here");
-        continue;
-    }
-    while (email[n] != '\0') {
-            ++n;
-            ++i;
-            if (email[n] == '@') {
-                j++;
+    length = strlen(email);
+    while (i < length) 
+    {
+      if (length > MAX || length < MIN) 
+      {
+      printf("ERRO: Email deve conter entre %d e %d caracteres\n", MIN, MAX);
+      free(email);
+      email = NULL;
+      break;
+      }
+
+      if (email[i] == '@') 
+      {
+        containAt++;
+        printf("%d\n", containAt);
+      }
+      
+      for (int n = 0; n < length; n++) 
+      {
+        if (email[n] == '!' || email[n] == '#' || email[n] == '$' || email[n] == '^' || email[n] == '&' ||
+            email[n] == '*' || email[n] == '(' || email[n] == ')' || email[n] == '"' || email[n] == '{' ||
+            email[n] == '}' || email[n] == '<' || email[n] == '>' || email[n] == '?' || email[n] == '[' ||
+            email[n] == ']' || email[n] == '-') 
+        {
+          containSpecialChar = 1;
+          break;
         }
-            if (email[n] == '*' || email[n] == '$' || email[n] == '%' || email[n] == '"' || email[n] == '#' || email[n] == '(' || email[n] == ')' || email[n] == '&' || email[n] == ' ') {
-                printf("ERRO: USO DE CHAR PROIBIDO NO EMAIL\n");
-                free(email);
-                i = 0;
-                j = 0;
-                n = 0;
-                email = NULL;
-                break;
-            }
-            if (isupper(email[n])) {
-                printf("ERRO: USO DE CHAR MAIUSCULO NO EMAIL\n");
-                free(email);
-                i = 0;
-                j = 0;
-                n = 0;
-                email = NULL;
-                break;
-            } else if (j != 1) {
-                printf("ERRO: USO DE MAIS DE 1 CHAR @ NO EMAIL\n");
-                free(email);
-                i = 0;
-                j = 0;
-                n = 0;
-                email = NULL;
-                break;
-            }
-        }
-        if (email != NULL) {
-                break;
-            }
+      }
+      i++;
     }
-    printf("%s\n", email);
-    printf("%i\n", i);
+
+    if (email != NULL) 
+      { 
+        if (containAt != 1) 
+        {
+          printf("ERRO: Uso incorreto de caractere @\n");
+          printf("%d", containAt);
+          free(email);
+          containAt = 0;
+          email = NULL;
+        } else  if (containSpecialChar == 1) {
+          printf("ERRO: Uso de caracteres especiais\n");
+          free(email);
+          email = NULL;
+          containAt = 0;
+          containSpecialChar = 0;
+        } else {
+          break;
+        }
+      }
+  }
+    printf("Email cadastrado com sucesso! Seu email é %s\n", email);
     free(email);
     return 0;
 }
